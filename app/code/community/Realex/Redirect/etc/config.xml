@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Realex_Redirect extension
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ *
+ * @category   Realex
+ * @package    Realex_Redirect
+ * @copyright  Copyright (c) 2015 StudioForty9
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+
+/**
+ * @category   Realex
+ * @package    Realex_Redirect
+ * @author     StudioForty9 <info@studioforty9.com>
+ */
+-->
+<config>
+    <modules>
+        <Realex_Redirect>
+            <version>0.0.1</version>
+        </Realex_Redirect>
+    </modules>
+    <global>
+        <models>
+            <realex_redirect>
+                <class>Realex_Redirect_Model</class>
+            </realex_redirect>
+        </models>
+        <blocks>
+            <realex_redirect>
+                <class>Realex_Redirect_Block</class>
+            </realex_redirect>
+        </blocks>
+        <helpers>
+            <realex_redirect>
+                <class>Realex_Redirect_Helper</class>
+            </realex_redirect>
+        </helpers>
+    </global>
+
+    <frontend>
+        <routers>
+            <realex_core>
+                <args>
+                    <modules>
+                        <realex_redirect before="Realex_Core">Realex_Redirect</realex_redirect>
+                    </modules>
+                </args>
+            </realex_core>
+        </routers>
+    </frontend>
+
+    <default>
+        <payment>
+            <realex_redirect>
+                <title>Realex RealAuth Redirect</title>
+                <checkout_message>You will be redirected to the Realex website once you place your order.</checkout_message>
+                <redirect_message>You will be redirected to Realex in a few seconds.</redirect_message>
+                <model>realex_redirect/redirect</model>
+                <order_status>pending</order_status>
+                <payment_action>authorize</payment_action>
+            </realex_redirect>
+        </payment>
+    </default>
+</config>

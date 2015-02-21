@@ -1,0 +1,29 @@
+{
+    "description": "StudioForty9 Realex Redirect module",
+    "extra": {
+        "map": [
+            [
+                "app/etc/modules/Realex_Redirect.xml",
+                "app/etc/modules/Realex_Redirect.xml"
+            ],
+            [
+                "app/code/community/Realex/Redirect/",
+                "app/code/community/Realex/Redirect/"
+            ],
+            [
+                "app/design/frontend/base/default/template/realex/redirect/form.phtml",
+                "app/design/frontend/base/default/template/realex/redirect/form.phtml"
+            ]
+        ]
+    },
+    "name": "realex/redirect",
+    "require": {
+        "magento-hackathon/magento-composer-installer": "*",
+		"realex/core": "*"
+    },
+    "require-dev": {
+      "magetest/magento-behat-extension": "dev-develop"
+    },
+    "type": "magento-module",
+    "version": "0.0.1"
+}
