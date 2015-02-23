@@ -20,15 +20,18 @@
  * @package    Realex_Redirect
  * @author     StudioForty9 <info@studioforty9.com>
  */
-class Realex_Redirect_Block_Redirect_Redirect extends Mage_Core_Block_Abstract
+class Realex_Redirect_Block_Redirect extends Mage_Core_Block_Abstract
 {
     /**
      * @return string
      */
     protected function _toHtml()
     {
+        $session = Mage::getSingleton('checkout/session');
+        $quote = $session->getQuote();
+
         $timestamp = $merchantid = $account = $orderid = $currency = $cardnumber = $expdate = $cardname = $cardtype = $issueno = $cvc = $customerID = $productID = $billingPostcode = $billingCountry =	$shippingPostcode = $shippingCountry = $sha1hash = '';
-        $redirect = Mage::getModel('realex/redirect');
+        $redirect = Mage::getModel('realex_redirect/redirect');
         
         $timestamp = strftime("%Y%m%d%H%M%S");
 
@@ -40,12 +43,12 @@ class Realex_Redirect_Block_Redirect_Redirect extends Mage_Core_Block_Abstract
             ->setUseContainer(true);
 
 
-        $orderid = $redirect->getCheckout()->getLastRealOrderId();
+        $orderid = $session->getLastRealOrderId();
         $order = Mage::getModel('sales/order');
         $order->loadByIncrementId($orderid);
         		
 		if($redirect->getConfigData('currency') == 'display'){
-	        $currency = $redirect->getQuote()->getStore()->getCurrentCurrencyCode();
+	        $currency = $quote->getStore()->getCurrentCurrencyCode();
             $amount = $order->getGrandTotal();
 		}else{
 			$currency = $order->getBaseCurrencyCode();
@@ -55,13 +58,13 @@ class Realex_Redirect_Block_Redirect_Redirect extends Mage_Core_Block_Abstract
 		$amount = $amount * 100;
 		$amount = round($amount);
         
-        $merchantid = $redirect->getConfigData('login');
-        $secret = $redirect->getConfigData('pwd');
+        $merchantid = Mage::getStoreConfig('realex/account/merchantid');
+        $secret = Mage::getStoreConfig('realex/account/secret');
         
 		if(Mage::getSingleton('core/session')->getRealexCcType() == 'amex'){
-		      	$account = $redirect->getConfigData('amexAccount');
+		      	$account = Mage::getStoreConfig('realex/account/amexAccount');
 		}else{
-		      	$account = $redirect->getConfigData('account');
+            $account = Mage::getStoreConfig('realex/account/account');
 		}
         
         $tmp = "$timestamp.$merchantid.$orderid.$amount.$currency";
@@ -75,10 +78,10 @@ class Realex_Redirect_Block_Redirect_Redirect extends Mage_Core_Block_Abstract
 			$autosettle = 0;	
 		}
 
-		$customerID = $redirect->getQuote()->getCustomerId();
+		$customerID = $quote->getCustomerId();
 
-		$billing = $redirect->getQuote()->getBillingAddress();
-		$shipping = $redirect->getQuote()->getShippingAddress();
+		$billing = $quote->getBillingAddress();
+		$shipping = $quote->getShippingAddress();
 
         $billingCountry = $billing->getCountry();
 		$billingPostcode = $billing->getPostcode();
@@ -123,14 +126,12 @@ class Realex_Redirect_Block_Redirect_Redirect extends Mage_Core_Block_Abstract
         $form->addField('COMMENT1', 'hidden', array('name'=>'COMMENT1', 'value'=>$comment1));
         $form->addField('COMMENT2', 'hidden', array('name'=>'COMMENT2', 'value'=>$comment2));
         $html = '<html><body>';
-        $html.= Mage::app()->getLayout()->createBlock('cms/block')->setBlockId('realex_redirect')->toHtml();
+        $html.= '<p>' . Mage::getStoreConfig('payment/realex_redirect/redirect_message') . '</p>';
         $html.= $form->toHtml();
-        $html.= '<script type="text/javascript">document.getElementById("realex_redirect_checkout").submit();</script>';
+//        $html.= '<script type="text/javascript">document.getElementById("realex_redirect_checkout").submit();</script>';
         $html.= '</body></html>';
-        
-        if($redirect->getConfigData('debug')){
-	        Mage::log($html);
-        }
+
+        Mage::helper('realex_core')->log($html, '/redirect');
 
         return $html;
     }

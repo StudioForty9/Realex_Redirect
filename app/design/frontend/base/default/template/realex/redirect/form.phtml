@@ -19,7 +19,7 @@
     <?php $_code = $this->getMethodCode() ?>
 
     <ul id="payment_form_<?php echo $_code ?>" style="display:none">
-        <li><?php echo $this->__('You will be redirected to the Realex website once you place your order.') ?></li>
+        <li><?php echo $this->getCheckoutMessage(); ?></li>
         <?php if (Mage::getStoreConfig('payment/realex_redirect/amexAccount')): ?>
             <li>
                 <input id="<?php echo $_code ?>_amex" value="amex" type="radio" name="payment[amex]"

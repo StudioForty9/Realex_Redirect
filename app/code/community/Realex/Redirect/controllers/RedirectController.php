@@ -23,46 +23,15 @@
 class Realex_Redirect_RedirectController extends Mage_Core_Controller_Front_Action
 {
     /**
-     * Order instance
-     */
-    protected $_order;
-    
-    /**
-     *  Get order
-     *
-     *  @param    none
-     *  @return	  Mage_Sales_Model_Order
-     */
-    public function getOrder()
-    {
-        if ($this->_order == null) {
-        }
-        return $this->_order;
-    }
-
-    /**
-     * Get singleton with Realex Redirect order transaction information
-     *
-     * @return Mage_Realex_Model_Redirect
-     */
-    public function getRedirect()
-    {
-        return Mage::getSingleton('realex/redirect');
-    }
-
-    /**
      * @return void
      */
     public function indexAction()
     {
-        $session = Mage::getSingleton('checkout/session');
-        $session->setRealexRedirectQuoteId($session->getQuoteId());
-        $session->unsQuoteId();
-        
         $this->loadLayout();
-        $this->getLayout()->getBlock('content')->append($this->getLayout()->createBlock('realex/redirect_redirect'));
+        $this->getLayout()->getBlock('content')->append(
+            $this->getLayout()->createBlock('realex_redirect/redirect')
+        );
         $this->renderLayout();
-
     }
 
     /**
@@ -106,28 +75,5 @@ class Realex_Redirect_RedirectController extends Mage_Core_Controller_Front_Acti
             $session->getQuote()->setIsActive(false)->save();
             $this->_redirect('checkout/onepage/success', array('_secure'=>true));
         }
-    }
-
-    /**
-     * @return
-     */
-    public function failureAction(){
-        $session = Mage::getSingleton('checkout/session');
-        $lastQuoteId = $session->getLastQuoteId();
-        $lastOrderId = $session->getLastOrderId();
-
-        if (!$lastQuoteId || !$lastOrderId) {
-            $this->_redirect('checkout/cart');
-            return;
-        }
-
-        $order = Mage::getModel('sales/order')->loadByAttribute('entity_id', $lastOrderId);
-
-        if ($order->getId()) {
-            $order->addStatusToHistory('canceled', $session->getErrorMessage())->save();
-        }
-
-        $this->_redirect('checkout/onepage/failure');
-        return;
     }
 }

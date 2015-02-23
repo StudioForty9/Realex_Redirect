@@ -20,7 +20,7 @@
  * @package    Realex_Redirect
  * @author     StudioForty9 <info@studioforty9.com>
  */
-class Realex_Redirect_Block_Redirect_Form extends Mage_Payment_Block_Form
+class Realex_Redirect_Block_Form extends Mage_Payment_Block_Form
 {
     /**
      * @return void
@@ -29,5 +29,13 @@ class Realex_Redirect_Block_Redirect_Form extends Mage_Payment_Block_Form
     {
         $this->setTemplate('realex/redirect/form.phtml');
         parent::_construct();
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCheckoutMessage()
+    {
+        return Mage::getStoreConfig('payment/realex_redirect/checkout_message');
     }
 }
